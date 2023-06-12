@@ -26,9 +26,9 @@ export class App extends Component {
   addUrl = (newUrl) => {
     this.setState(prevState => ({
       urls: [...prevState.urls, newUrl]
-    }));
-    console.log(newUrl)
-    postUrl(newUrl);
+    }), () => {
+      postUrl(newUrl);
+    });
   }
   
 

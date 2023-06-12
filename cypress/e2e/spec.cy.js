@@ -10,12 +10,33 @@ describe('URL Shortener', () => {
         title: 'Awesome photo',
       },
     ],
+    
   };
+  const testData2 = {
+    urls: [
+      {
+        id: 1,
+        long_url: 'https://images.unsplash.com/photo-1531898418865-480b7090470f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=934&q=80',
+        short_url: 'http://localhost:3001/useshorturl/1',
+        title: 'Awesome photo',
+      },
+      {
+      id: 2,
+      long_url: 'https://test.com/djfshajkfhljkdsahfjkdfd',
+      short_url: 'http://localhost:3001/useshorturl/2',
+      title: 'Test URL',
+      }
+    ],
+    
+  };
+  
 
   beforeEach(() => {
-    cy.intercept('GET', apiUrl, { body: testData }).as('getUrls');
-    cy.visit('http://localhost:3000');
-    cy.wait('@getUrls');
+     
+      cy.intercept('GET', apiUrl, { body: testData }).as('getUrls');
+      cy.visit('http://localhost:3000');
+      cy.wait('@getUrls');
+    
   });
 
   it('displays the page title and existing shortened URLs', () => {
@@ -47,23 +68,28 @@ describe('URL Shortener', () => {
       expect(xhr.response.statusCode).to.eq(200);
     });
   });
-
+  
   it('renders the new shortened URL when form is submitted', () => {
+    
     const newUrl = {
-        id: 1,
-        long_url: 'https://images.unsplash.com/photo-1531898418865-480b7090470f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=934&q=80',
-        short_url: 'http://localhost:3001/useshorturl/1',
-        title: 'Awesome photo',
+        id: 2,
+        long_url: 'https://test.com/djfshajkfhljkdsahfjkdfd',
+        short_url: 'http://localhost:3001/useshorturl/2',
+        title: 'Test URL',
     };
-
+    
     cy.intercept('POST', apiUrl, {
       statusCode: 200,
       body: newUrl,
-    }).as('postUrl');
+    }).as('postUrl')
 
     cy.get('input[name="title"]').type(newUrl.title);
     cy.get('input[name="long_url"]').type(newUrl.long_url);
     cy.get('button').contains('Shorten Please!').click();
+
+    cy.intercept('GET', apiUrl, { body: testData2 }).as('getUrls');
+    cy.visit('http://localhost:3000');
+    cy.wait('@getUrls');
 
     cy.wait('@postUrl');
     cy.get('.url').last().within(() => {
