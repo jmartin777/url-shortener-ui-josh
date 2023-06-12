@@ -9,10 +9,19 @@ const getUrls = () => {
       
 }
 
-// export const postUrl = (data) => {
-//   // {long_url: <String>, title: <String>}
-//   fetchfetch('http://localhost:3001/api/v1/urls')
-// }
+export const postUrl = (data) => {
+  // {long_url: <String>, title: <String>}
+  fetch('http://localhost:3001/api/v1/urls',{
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {"Content-Type":"application/json"}
+
+  }).then(res => res.json())
+  .then(data => {
+       console.log(data);
+  })
+  .catch(error => console.error(error));
+}
 
 
 
